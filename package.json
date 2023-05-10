@@ -12,10 +12,17 @@
     "expo": "~48.0.15",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
-    "react-native": "0.71.7"
+    "react-native": "0.71.7",
+    "tailwind-react-native-classnames": "^1.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/jest": "^29.5.1",
+    "@types/react": "^18.2.6",
+    "@types/react-native": "^0.72.0",
+    "@types/react-test-renderer": "^18.0.0",
+    "ts-migrate": "^0.1.35",
+    "typescript": "^5.0.4"
   },
   "private": true
 }
