@@ -1,15 +1,17 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'expect'.
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("EventFunding", () => {
-  let eventFunding;
-  let owner;
-  let eventId;
-  let donator1;
+  let eventFunding: any;
+  let owner: any;
+  let eventId: any;
+  let donator1: any;
 
   beforeEach(async () => {
     const EventFunding = await ethers.getContractFactory("EventFunding");
     eventFunding = await EventFunding.deploy();
+    // @ts-expect-error TS(2552): Cannot find name 'donator2'. Did you mean 'donator... Remove this comment to see the full error message
     [owner, donator1, donator2] = await ethers.getSigners();
 
     await eventFunding.createEvent(
