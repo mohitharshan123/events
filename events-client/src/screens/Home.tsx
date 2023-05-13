@@ -1,20 +1,20 @@
 import React from 'react';
 import { ConnectWallet } from '@thirdweb-dev/react-native';
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
-import Events from './Events';
-import Add from './Add';
+import { BottomTabNavigatorParamList } from '../types';
+import { Screens } from '../types';
+import { TABS } from '../constants';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
-const Home: React.FC<{}> = () => {
+const Home = () => {
   return (
     <SafeAreaView className="flex flex-col h-full bg-black dark:bg-black">
       <ConnectWallet />
       <Tab.Navigator
-        initialRouteName="Events"
+        initialRouteName={Screens.Events}
         screenOptions={{
           headerShown: false,
           tabBarInactiveBackgroundColor: 'black',
@@ -22,36 +22,17 @@ const Home: React.FC<{}> = () => {
           tabBarActiveTintColor: 'white',
           unmountOnBlur: true,
         }}>
-        <Tab.Screen
-          options={{
-            tabBarLabel: 'All events',
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="rocket" color={color} size={size} />
-            ),
-          }}
-          name="Events"
-          component={Events}
-        />
-        <Tab.Screen
-          options={{
-            tabBarLabel: 'New',
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="plus-circle" color={color} size={size} />
-            ),
-          }}
-          name="Add"
-          component={Add}
-        />
-        <Tab.Screen
-          name="My events"
-          options={{
-            tabBarLabel: 'My events',
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="usd" color={color} size={size} />
-            ),
-          }}
-          component={Events}
-        />
+        {TABS.map(({ label, TabIcon, name, Component }) => (
+          <Tab.Screen
+            key={name}
+            options={{
+              tabBarLabel: label,
+              tabBarIcon: props => <TabIcon {...props} />,
+            }}
+            name={name as keyof BottomTabNavigatorParamList}
+            component={Component}
+          />
+        ))}
       </Tab.Navigator>
     </SafeAreaView>
   );

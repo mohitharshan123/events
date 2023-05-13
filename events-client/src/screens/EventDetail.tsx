@@ -1,19 +1,18 @@
 import React from 'react';
 import { View } from 'react-native';
+
 import EventCard from '../components/EventCard';
+import { EventDetailRouteProp } from '../types';
 
-import Animated from 'react-native-reanimated';
-import { sharedElementTransition } from '../utils';
-
-const EventDetail = ({ route }) => {
+const EventDetail = ({ route }: { route: EventDetailRouteProp }) => {
   const { event } = route.params;
+
   return (
-    <Animated.View
+    <View
       className="w-full h-full bg-black dark:bg:black"
-      sharedTransitionTag="sharedTag"
-      sharedTransitionStyle={sharedElementTransition}>
+      sharedTransitionTag="sharedTag">
       <EventCard event={event} />
-    </Animated.View>
+    </View>
   );
 };
 

@@ -1,14 +1,14 @@
 import React from 'react';
 import { useContract, useContractRead } from '@thirdweb-dev/react-native';
-import { View, FlatList, Text, TouchableOpacity } from 'react-native';
+import { View, FlatList, TouchableOpacity } from 'react-native';
 import Lottie from 'lottie-react-native';
-import Animated from 'react-native-reanimated';
 
-import { CONTRACT_ADDRESS, FUNCTIONS } from '../constants';
-import { parseEvents, sharedElementTransition } from '../utils';
+import { ACTIVE_OPACITY, CONTRACT_ADDRESS, FUNCTIONS } from '../constants';
+import { parseEvents } from '../utils';
 import EventCard from '../components/EventCard';
+import { Screens, EventsNavigationProp } from '../types';
 
-const Events = ({ navigation }) => {
+const Events = ({ navigation }: { navigation: EventsNavigationProp }) => {
   const { contract } = useContract(CONTRACT_ADDRESS);
   const { data, isLoading, refetch } = useContractRead(
     contract,
@@ -16,8 +16,6 @@ const Events = ({ navigation }) => {
   );
 
   const events = parseEvents(data);
-
-  console.log(events?.length);
 
   if (!data?.length && !isLoading) {
     return (
@@ -40,17 +38,15 @@ const Events = ({ navigation }) => {
           refreshing={isLoading}
           renderItem={({ item }) => (
             <View className="flex">
-              <Animated.View
-                className="flex w-full-h-full"
-                sharedTransitionStyle={sharedElementTransition}>
+              <View className="flex w-full-h-full">
                 <TouchableOpacity
-                  activeOpacity={0.9}
+                  activeOpacity={ACTIVE_OPACITY}
                   onPress={() =>
-                    navigation.navigate('EventDetail', { event: item })
+                    navigation.navigate(Screens.EventDetail, { event: item })
                   }>
                   <EventCard event={item} />
                 </TouchableOpacity>
-              </Animated.View>
+              </View>
             </View>
           )}
         />

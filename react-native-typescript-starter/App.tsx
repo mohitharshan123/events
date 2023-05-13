@@ -12,7 +12,7 @@ import EventDetail from '../events-client/src/screens/EventDetail';
 
 const Stack = createSharedElementStackNavigator();
 
-const App: React.FC<{}> = () => {
+const App = () => {
   return (
     <ThirdwebProvider
       activeChain="mumbai"

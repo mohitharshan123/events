@@ -10,20 +10,22 @@ import Home from './src/screens/Home';
 import EventDetail from './src/screens/EventDetail';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-const Stack = createNativeStackNavigator();
+import { RootStackParamList } from './src/types';
 
-const App: React.FC<{}> = () => {
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+
+const App = () => {
   return (
     <ThirdwebProvider
       activeChain="mumbai"
       supportedWallets={[metamaskWallet(), rainbowWallet()]}>
       <NavigationContainer>
-        <Stack.Navigator
+        <RootStack.Navigator
           screenOptions={{ headerShown: false }}
           initialRouteName="Home">
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="EventDetail" component={EventDetail} />
-        </Stack.Navigator>
+          <RootStack.Screen name="Home" component={Home} />
+          <RootStack.Screen name="EventDetail" component={EventDetail} />
+        </RootStack.Navigator>
       </NavigationContainer>
     </ThirdwebProvider>
   );

@@ -5,9 +5,9 @@ import Animated, {
   LightSpeedInLeft,
   FadeInLeft,
 } from 'react-native-reanimated';
-import web3 from 'web3-utils';
 
 import { EventToFund } from '../types';
+import { toEther } from '../utils';
 
 const EventCard = ({ event }: { event: EventToFund }) => (
   <Animated.View
@@ -36,13 +36,10 @@ const EventCard = ({ event }: { event: EventToFund }) => (
       </Animated.Text>
       <View className="mt-3 w-full flex flex-row justify-between mb-2">
         <Text className="text-gray-600 text-xs">
-          Collected:{' '}
-          {web3.fromWei(Math.round(event.amountCollected).toString(), 'ether')}{' '}
-          ETH
+          Collected: {toEther(event.amountCollected)} ETH
         </Text>
         <Text className="text-gray-600 text-xs">
-          Target: {web3.fromWei(Math.round(event.target).toString(), 'ether')}{' '}
-          ETH
+          Target: {toEther(event.target)} ETH
         </Text>
       </View>
       <Progress.Bar

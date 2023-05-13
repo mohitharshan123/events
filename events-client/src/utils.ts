@@ -1,12 +1,5 @@
 import { EventToFund } from './types';
-
-import { SharedTransition, withSpring } from 'react-native-reanimated';
-
-const SPRING_CONFIG = {
-  mass: 1,
-  stiffness: 100,
-  damping: 200,
-};
+import web3 from 'web3-utils';
 
 export const parseEvents = (events: Array<any>): Array<EventToFund> =>
   events?.map((event, index) => ({
@@ -22,12 +15,5 @@ export const parseEvents = (events: Array<any>): Array<EventToFund> =>
     refunded: event[9],
   }));
 
-export const sharedElementTransition = SharedTransition.custom(values => {
-  ('worklet');
-  return {
-    height: withSpring(values.targetHeight, SPRING_CONFIG),
-    width: withSpring(values.targetWidth, SPRING_CONFIG),
-    originX: withSpring(values.targetGlobalOriginX, SPRING_CONFIG),
-    originY: withSpring(values.targetGlobalOriginY, SPRING_CONFIG),
-  };
-});
+export const toEther = (amount: number) =>
+  web3.fromWei(Math.round(amount).toString(), 'ether');

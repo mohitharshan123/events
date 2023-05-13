@@ -8,48 +8,24 @@ import {
   Image,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import { StackNavigationProp } from '@react-navigation/stack';
-import {
-  useContract,
-  useContractWrite,
-  useAddress,
-  useStorageUpload,
-  Web3Button,
-} from '@thirdweb-dev/react-native';
+import { useAddress, Web3Button } from '@thirdweb-dev/react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import storage from '@react-native-firebase/storage'; // 1
+import storage from '@react-native-firebase/storage';
 
-import { CONTRACT_ADDRESS, FUNCTIONS } from '../constants';
+import {
+  ACTIVE_OPACITY,
+  CONTRACT_ADDRESS,
+  EVENT_FORM_INITIAL_VALUES,
+  FUNCTIONS,
+} from '../constants';
 import DatePicker from 'react-native-date-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { Screens, AddEventNavigationProp, EventFormFields } from '../types';
 
-type EventFormFields = {
-  title: string;
-  description: string;
-  target: string;
-  deadline: string;
-  imageUrl: string;
-};
-
-type RootStackParamList = {
-  Home: undefined;
-  Add: undefined;
-};
-
-const Add = ({
-  navigation,
-}: StackNavigationProp<RootStackParamList, 'Add'>) => {
+const Add = ({ navigation }: { navigation: AddEventNavigationProp }) => {
   const address = useAddress();
 
-  const { mutateAsync: uploadImage } = useStorageUpload();
-
-  const { contract } = useContract(CONTRACT_ADDRESS);
-  const { mutateAsync: createEvent, isLoading } = useContractWrite(
-    contract,
-    FUNCTIONS.create_event,
-  );
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [selectedImageName, setSelectedImageName] = useState('');
 
   const {
     control,
@@ -58,14 +34,20 @@ const Add = ({
     setValue,
     watch,
   } = useForm({
-    defaultValues: {
-      title: '',
-      description: '',
-      target: '',
-      deadline: '',
-      imageUrl: '',
-    },
+    defaultValues: EVENT_FORM_INITIAL_VALUES,
   });
+
+  const createEvent = async (contract: any) => {
+    await contract.call(FUNCTIONS.create_event, [
+      address,
+      title,
+      description,
+      target,
+      deadline,
+      imageUrl,
+    ]);
+    navigation.navigate(Screens.Events);
+  };
 
   const uploadImageToStorage = async ({
     imageName,
@@ -74,8 +56,6 @@ const Add = ({
     imageName: string;
     imagePath: string;
   }) => {
-    if (!imageName || !imagePath) return;
-
     let reference = storage().ref(imageName); // 2
     await reference.putFile(imagePath, { contentType: 'image/jpg' });
     const url = await reference.getDownloadURL();
@@ -84,26 +64,18 @@ const Add = ({
 
   const { title, description, target } = getValues();
 
-  // const onSubmit = async () => {
-  //   try {
-  //     await createEvent({
-  //       args: [address, title, description, target, deadline, imageUrl],
-  //     });
-  //     navigation.navigate('Events');
-  //   } catch (err) {
-  //     console.error('contract call failure', err);
-  //   }
-  // };
-
   const handleSelectImage = async () => {
-    const image = await launchImageLibrary(
+    const uploadImage = (image: any) => {
+      if (!image.assets?.length) return;
+      const { uri: imagePath } = image.assets[0];
+      const imageName = imagePath?.substring(imagePath.lastIndexOf('/') + 1);
+      if (!imageName || !imagePath) return;
+
+      uploadImageToStorage({ imageName, imagePath });
+    };
+    await launchImageLibrary(
       { mediaType: 'photo', selectionLimit: 1 },
-      image => {
-        if (!image.assets?.length) return;
-        const { uri: imagePath } = image.assets[0];
-        const imageName = imagePath?.substring(imagePath.lastIndexOf('/') + 1);
-        uploadImageToStorage({ imageName, imagePath });
-      },
+      uploadImage,
     );
   };
 
@@ -153,7 +125,7 @@ const Add = ({
             {deadline ? new Date(Number(deadline)).toLocaleDateString() : ''}
           </Text>
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={ACTIVE_OPACITY}
             className="rounded-xl "
             onPress={() => setIsDatePickerOpen(true)}>
             <Icon name="calendar-o" color="grey" size={30} />
@@ -184,7 +156,7 @@ const Add = ({
           />
         )}
         <TouchableOpacity
-          activeOpacity={0.8}
+          activeOpacity={ACTIVE_OPACITY}
           className="rounded-xl "
           onPress={handleSelectImage}>
           <Icon name="image" color="grey" size={30} />
@@ -194,17 +166,7 @@ const Add = ({
         <Web3Button
           theme="dark"
           contractAddress={CONTRACT_ADDRESS}
-          action={async contract => {
-            await contract.call(FUNCTIONS.create_event, [
-              address,
-              title,
-              description,
-              target,
-              deadline,
-              imageUrl,
-            ]);
-            navigation.navigate('Events');
-          }}>
+          action={createEvent}>
           Create event
         </Web3Button>
       </View>
