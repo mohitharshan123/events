@@ -22,6 +22,7 @@ contract EventFunding {
 
     mapping(uint256 => Event) public events;
     mapping(address => uint256) public donatorDonations;
+    mapping(address => Event[]) public userEvents;
 
     event Refund(address indexed donator, uint256 amount);
     event EventCreated(address indexed owner, string title);
@@ -45,7 +46,6 @@ contract EventFunding {
        _;
     }
 
-
     function createEvent(
         address _owner, 
         string memory _title, 
@@ -67,6 +67,7 @@ contract EventFunding {
         _event.amountCollected = 0;
         _event.image = _image;
         _event.refunded = false;
+        userEvents[_owner].push(_event);
         numberOfEvents++;
 
         emit EventCreated(_owner, _title);
@@ -103,6 +104,10 @@ contract EventFunding {
         }
 
         return allEvents;
+    }
+
+    function getMyEvents(address user) public view returns (Event[] memory) {
+        return userEvents[user];
     }
 
     function findDonatorIndex(address target, uint256 _eventId) internal view returns (uint256) {
