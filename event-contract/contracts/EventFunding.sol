@@ -4,6 +4,7 @@ import "hardhat/console.sol";
 
 contract EventFunding {
     struct Event {
+        uint256 id;
         address payable owner;
         string title;
         string description;
@@ -58,7 +59,8 @@ contract EventFunding {
         Event storage _event = events[numberOfEvents];
 
         require(!_event.refunded, "The event is already refunded.");
-
+        
+        _event.id = numberOfEvents;
         _event.owner = payable(_owner);
         _event.title = _title;
         _event.description = _description;

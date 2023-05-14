@@ -55,3 +55,7 @@ export type EventFormFields = {
   deadline: string;
   imageUrl: string;
 };
+
+export type CreateEventProp = {
+  navigation: AddEventNavigationProp;
+};

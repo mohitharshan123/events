@@ -1,3 +1,4 @@
+import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Add from './screens/Add';
@@ -5,7 +6,7 @@ import Events from './screens/Events';
 import { Screens } from './types';
 
 export const CONTRACT_ADDRESS: string =
-  '0x4089B524fF4bEb3ABD338D2fBddC4f204C6A0807';
+  '0x020DE6450950B8AFF4B14279D825920625d03ec0';
 
 export const FUNCTIONS = {
   get_events: 'getEvents',

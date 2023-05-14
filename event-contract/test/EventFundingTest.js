@@ -27,6 +27,7 @@ describe("EventFunding", () => {
   it("should create an event with the correct details", async () => {
     const eventDetails = await eventFunding.events(eventId);
 
+    expect(eventDetails.id).to.equal(0);
     expect(eventDetails.owner).to.equal(owner.address);
     expect(eventDetails.title).to.equal("Event Title");
     expect(eventDetails.description).to.equal("Event Description");

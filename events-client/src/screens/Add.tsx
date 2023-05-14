@@ -1,95 +1,38 @@
 import React, { useState } from 'react';
-import {
-  Text,
-  View,
-  TextInput,
-  Button,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { useAddress, Web3Button } from '@thirdweb-dev/react-native';
+import { Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { Controller } from 'react-hook-form';
+import { Web3Button } from '@thirdweb-dev/react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import storage from '@react-native-firebase/storage';
 
-import {
-  ACTIVE_OPACITY,
-  CONTRACT_ADDRESS,
-  EVENT_FORM_INITIAL_VALUES,
-  FUNCTIONS,
-} from '../constants';
+import { ACTIVE_OPACITY, CONTRACT_ADDRESS } from '../constants';
 import DatePicker from 'react-native-date-picker';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { Screens, AddEventNavigationProp, EventFormFields } from '../types';
+import { CreateEventProp, EventFormFields } from '../types';
+import ImageUploader from '../components/ImageUploader';
+import useCreateEvent from '../hooks/useCreateEvent';
 
-const Add = ({ navigation }: { navigation: AddEventNavigationProp }) => {
-  const address = useAddress();
-
+const Add = ({ navigation }: CreateEventProp) => {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const {
+    deadline,
+    imageUrl,
     control,
-    formState: { errors },
-    getValues,
+    errors,
     setValue,
-    watch,
-  } = useForm({
-    defaultValues: EVENT_FORM_INITIAL_VALUES,
-  });
-
-  const createEvent = async (contract: any) => {
-    await contract.call(FUNCTIONS.create_event, [
-      address,
-      title,
-      description,
-      target,
-      deadline,
-      imageUrl,
-    ]);
-    navigation.navigate(Screens.Events);
-  };
-
-  const uploadImageToStorage = async ({
-    imageName,
-    imagePath,
-  }: {
-    imageName: string;
-    imagePath: string;
-  }) => {
-    let reference = storage().ref(imageName); // 2
-    await reference.putFile(imagePath, { contentType: 'image/jpg' });
-    const url = await reference.getDownloadURL();
-    setValue('imageUrl', url);
-  };
-
-  const { title, description, target } = getValues();
-
-  const handleSelectImage = async () => {
-    const uploadImage = (image: any) => {
-      if (!image.assets?.length) return;
-      const { uri: imagePath } = image.assets[0];
-      const imageName = imagePath?.substring(imagePath.lastIndexOf('/') + 1);
-      if (!imageName || !imagePath) return;
-
-      uploadImageToStorage({ imageName, imagePath });
-    };
-    await launchImageLibrary(
-      { mediaType: 'photo', selectionLimit: 1 },
-      uploadImage,
-    );
-  };
-
-  const deadline = watch('deadline');
-  const imageUrl = watch('imageUrl');
+    createEvent,
+    handleSubmit,
+  } = useCreateEvent({ navigation });
 
   const renderInput = ({
     name,
     placeholder,
     isNumber = false,
+    isDate = false,
   }: {
     name: keyof EventFormFields;
     placeholder: string;
     isNumber?: boolean;
+    isDate?: boolean;
   }) => (
     <>
       <Controller
@@ -97,19 +40,34 @@ const Add = ({ navigation }: { navigation: AddEventNavigationProp }) => {
         rules={{
           required: true,
         }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder={placeholder}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            keyboardType={isNumber ? 'number-pad' : 'default'}
-            className="border border-gray-400 rounded-xl m-4 px-2"
-          />
-        )}
+        render={({ field: { onChange, onBlur, value } }) => {
+          if (isDate) {
+            return (
+              <DatePicker
+                modal
+                open={isDatePickerOpen}
+                date={deadline ? new Date(Number(deadline)) : new Date()}
+                onConfirm={date => onChange(date.getTime().toString())}
+                onCancel={() => setIsDatePickerOpen(false)}
+              />
+            );
+          }
+          return (
+            <TextInput
+              placeholder={placeholder}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              keyboardType={isNumber ? 'number-pad' : 'default'}
+              className="border border-gray-400 rounded-xl m-4 px-2"
+            />
+          );
+        }}
         name={name}
       />
-      {errors[name] && <Text>This is required.</Text>}
+      {errors[name] && (
+        <Text className="text-xs ml-4 text-red-600">This is required.</Text>
+      )}
     </>
   );
 
@@ -119,11 +77,19 @@ const Add = ({ navigation }: { navigation: AddEventNavigationProp }) => {
       {renderInput({ name: 'description', placeholder: 'Description' })}
       {renderInput({ name: 'target', placeholder: 'Target', isNumber: true })}
       <>
-        <View className="flex flex-row items-center mx-4 justify-between space-x-4 mb-10">
-          <Text className="text-white font-bold ml-2">
-            Deadline{' '}
-            {deadline ? new Date(Number(deadline)).toLocaleDateString() : ''}
-          </Text>
+        <View className="flex flex-row items-center mx-4 space-x-4 mb-10">
+          <Text className="text-white ml-2">Deadline </Text>
+          {deadline && (
+            <Text className="border border-gray-500 p-2 rounded-full">
+              {' '}
+              {new Date(Number(deadline)).toLocaleDateString()}
+            </Text>
+          )}
+          {renderInput({
+            name: 'deadline',
+            placeholder: 'Deadline',
+            isDate: true,
+          })}
           <TouchableOpacity
             activeOpacity={ACTIVE_OPACITY}
             className="rounded-xl "
@@ -131,42 +97,18 @@ const Add = ({ navigation }: { navigation: AddEventNavigationProp }) => {
             <Icon name="calendar-o" color="grey" size={30} />
           </TouchableOpacity>
         </View>
-        <DatePicker
-          modal
-          open={isDatePickerOpen}
-          date={deadline ? new Date(Number(deadline)) : new Date()}
-          onConfirm={date => {
-            setIsDatePickerOpen(false);
-            setValue('deadline', date.getTime().toString(), {
-              shouldDirty: true,
-            });
-          }}
-          onCancel={() => {
-            setIsDatePickerOpen(false);
-          }}
-        />
       </>
-      <View className="flex flex-row items-center mx-4 justify-between space-x-4 mb-10">
+      <View className="flex flex-row items-center mx-4 space-x-4 mb-10">
         <Text className="text-white font-bold ml-2">Image</Text>
-        {imageUrl && (
-          <Image
-            source={{ uri: imageUrl }}
-            className="w-20 h-20"
-            resizeMode="cover"
-          />
-        )}
-        <TouchableOpacity
-          activeOpacity={ACTIVE_OPACITY}
-          className="rounded-xl "
-          onPress={handleSelectImage}>
-          <Icon name="image" color="grey" size={30} />
-        </TouchableOpacity>
+        <View>
+          <ImageUploader imageUrl={imageUrl} setValue={setValue} />
+        </View>
       </View>
       <View className="m-4">
         <Web3Button
           theme="dark"
           contractAddress={CONTRACT_ADDRESS}
-          action={createEvent}>
+          action={contract => handleSubmit(createEvent(contract))}>
           Create event
         </Web3Button>
       </View>

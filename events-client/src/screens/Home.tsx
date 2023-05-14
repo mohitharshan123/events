@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabNavigatorParamList } from '../types';
 import { Screens } from '../types';
 import { TABS } from '../constants';
+import TabBar from '../components/TabBar';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
@@ -21,6 +22,10 @@ const Home = () => {
           tabBarActiveBackgroundColor: 'black',
           tabBarActiveTintColor: 'white',
           unmountOnBlur: true,
+        }}
+        tabBar={props => {
+          console.log(props);
+          return <TabBar {...props} />;
         }}>
         {TABS.map(({ label, TabIcon, name, Component }) => (
           <Tab.Screen

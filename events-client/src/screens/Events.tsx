@@ -17,6 +17,8 @@ const Events = ({ navigation }: { navigation: EventsNavigationProp }) => {
 
   const events = parseEvents(data);
 
+  console.log(events);
+
   if (!data?.length && !isLoading) {
     return (
       <View className="w-full flex flex-col h-full px-2 justify-center bg-black dark:bg-black">

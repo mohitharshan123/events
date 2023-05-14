@@ -31,6 +31,11 @@ const EventCard = ({ event }: { event: EventToFund }) => (
       </Animated.Text>
       <Animated.Text
         entering={FadeInLeft}
+        className="text-slate-900 text-md font-light">
+        {event.deadline}
+      </Animated.Text>
+      <Animated.Text
+        entering={FadeInLeft}
         className="text-slate-900 text-xs font-light">
         Donators: {event.donators.length}
       </Animated.Text>
