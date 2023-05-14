@@ -36,6 +36,8 @@ const Events = ({
   const events =
     loadedFrom === 'events' ? parseEvents(allEvents) : parseEvents(myEvents);
 
+  console.log({ myEvents: events });
+
   const isLoading =
     loadedFrom === 'events' ? isAllEventsLoading : isMyEventsLoading;
 
@@ -54,13 +56,13 @@ const Events = ({
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
+          className="flex-1"
           data={events}
           onRefresh={refetch}
           refreshing={isLoading}
           renderItem={({ item }) => (
             <View className="flex">
-              <View className="flex w-full-h-full">
+              <View className="flex w-full">
                 <TouchableOpacity
                   activeOpacity={ACTIVE_OPACITY}
                   onPress={() =>

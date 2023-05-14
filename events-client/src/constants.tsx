@@ -6,12 +6,13 @@ import Events from './screens/Events';
 import { Screens } from './types';
 
 export const CONTRACT_ADDRESS: string =
-  '0x020DE6450950B8AFF4B14279D825920625d03ec0';
+  '0x7b5eeb87CC676697749F1d56bC005Bba1138b724';
 
 export const FUNCTIONS = {
   get_events: 'getEvents',
   create_event: 'createEvent',
   get_my_events: 'getMyEvents',
+  get_donators: 'getDonators',
 };
 
 export const ACTIVE_OPACITY = 0.8;

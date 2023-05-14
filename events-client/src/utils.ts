@@ -17,15 +17,15 @@ export const parseEvents = (events: Array<any>): Array<EventToFund> =>
       refunded,
     ] = event;
     return {
-      id,
+      id: parseInt(id, 16).toString(),
       owner,
       title,
       description,
       target,
       deadline: new Date(parseInt(deadline, 16)).toString(),
-      amountCollected,
+      amountCollected: parseInt(amountCollected, 16),
       imageUrl,
-      donators: donators.toString(),
+      donators: donators,
       donations: donations.toString(),
       refunded,
     };
