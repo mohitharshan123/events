@@ -11,6 +11,7 @@ export const CONTRACT_ADDRESS: string =
 export const FUNCTIONS = {
   get_events: 'getEvents',
   create_event: 'createEvent',
+  get_my_events: 'getMyEvents',
 };
 
 export const ACTIVE_OPACITY = 0.8;
@@ -40,6 +41,6 @@ export const TABS = [
     label: 'My Events',
     TabIcon: (props: any) => <Icon name="usd" {...props} />,
     name: Screens.MyEvents,
-    Component: Events,
+    Component: props => <Events loadedFrom="myEvents" {...props} />,
   },
 ];

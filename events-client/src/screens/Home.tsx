@@ -23,10 +23,7 @@ const Home = () => {
           tabBarActiveTintColor: 'white',
           unmountOnBlur: true,
         }}
-        tabBar={props => {
-          console.log(props);
-          return <TabBar {...props} />;
-        }}>
+        tabBar={props => <TabBar {...props} />}>
         {TABS.map(({ label, TabIcon, name, Component }) => (
           <Tab.Screen
             key={name}

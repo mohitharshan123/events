@@ -1,5 +1,9 @@
 import React from 'react';
-import { useContract, useContractRead } from '@thirdweb-dev/react-native';
+import {
+  useAddress,
+  useContract,
+  useContractRead,
+} from '@thirdweb-dev/react-native';
 import { View, FlatList, TouchableOpacity } from 'react-native';
 import Lottie from 'lottie-react-native';
 
@@ -8,18 +12,34 @@ import { parseEvents } from '../utils';
 import EventCard from '../components/EventCard';
 import { Screens, EventsNavigationProp } from '../types';
 
-const Events = ({ navigation }: { navigation: EventsNavigationProp }) => {
+const Events = ({
+  navigation,
+  loadedFrom = 'events',
+}: {
+  navigation: EventsNavigationProp;
+  loadedFrom: 'events' | 'myEvents';
+}) => {
   const { contract } = useContract(CONTRACT_ADDRESS);
-  const { data, isLoading, refetch } = useContractRead(
+  const user = useAddress();
+  const {
+    data: allEvents,
+    isLoading: isAllEventsLoading,
+    refetch,
+  } = useContractRead(contract, FUNCTIONS.get_events);
+
+  const { data: myEvents, isLoading: isMyEventsLoading } = useContractRead(
     contract,
-    FUNCTIONS.get_events,
+    FUNCTIONS.get_my_events,
+    [user],
   );
 
-  const events = parseEvents(data);
+  const events =
+    loadedFrom === 'events' ? parseEvents(allEvents) : parseEvents(myEvents);
 
-  console.log(events);
+  const isLoading =
+    loadedFrom === 'events' ? isAllEventsLoading : isMyEventsLoading;
 
-  if (!data?.length && !isLoading) {
+  if (!events?.length && !isLoading) {
     return (
       <View className="w-full flex flex-col h-full px-2 justify-center bg-black dark:bg-black">
         <Lottie source={require('../lotties/nodata.json')} />
