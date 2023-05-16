@@ -24,7 +24,6 @@ const EventCard = ({
   navigation,
 }: EventCardProps) => {
   const wallet = useWallet();
-  console.log(wallet);
   const [isDonateModalVisible, setIsDonateModalVisible] =
     useState<boolean>(false);
   const animatedCardStyles = useAnimatedStyle(() => {
