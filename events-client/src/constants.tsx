@@ -1,5 +1,5 @@
+import Lottie from 'lottie-react-native';
 import React from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Add from './screens/Add';
 import Events from './screens/Events';
@@ -13,10 +13,13 @@ export const FUNCTIONS = {
   create_event: 'createEvent',
   get_my_events: 'getMyEvents',
   get_donators: 'getDonators',
+  donate_to_event: 'donateToEvent',
+  is_donator: 'isDonator',
+  get_event: 'events',
 };
 
 export const ACTIVE_OPACITY = 0.8;
-
+export const TAB_BAR_HEIGHT = 50;
 export const EVENT_FORM_INITIAL_VALUES = {
   title: '',
   description: '',
@@ -28,20 +31,28 @@ export const EVENT_FORM_INITIAL_VALUES = {
 export const TABS = [
   {
     label: 'All Events',
-    TabIcon: (props: any) => <Icon name="rocket" {...props} />,
+    TabIcon: (props: any) => (
+      <Lottie source={require('./lotties/events.json')} {...props} />
+    ),
     name: Screens.Events,
     Component: Events,
   },
   {
     label: 'Add',
-    TabIcon: (props: any) => <Icon name="plus-circle" {...props} />,
+    TabIcon: (props: any) => (
+      <Lottie source={require('./lotties/add.json')} {...props} />
+    ),
     name: Screens.Add,
     Component: Add,
   },
   {
     label: 'My Events',
-    TabIcon: (props: any) => <Icon name="usd" {...props} />,
+    TabIcon: (props: any) => (
+      <Lottie source={require('./lotties/my_events.json')} {...props} />
+    ),
     name: Screens.MyEvents,
-    Component: props => <Events loadedFrom="myEvents" {...props} />,
+    Component: (props: any) => (
+      <Events loadedFrom={Screens.MyEvents} {...props} />
+    ),
   },
 ];

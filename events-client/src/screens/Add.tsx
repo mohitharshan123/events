@@ -3,6 +3,7 @@ import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { Web3Button } from '@thirdweb-dev/react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useWallet } from '@thirdweb-dev/react-native';
 
 import { ACTIVE_OPACITY, CONTRACT_ADDRESS } from '../constants';
 import DatePicker from 'react-native-date-picker';
@@ -11,6 +12,7 @@ import ImageUploader from '../components/ImageUploader';
 import useCreateEvent from '../hooks/useCreateEvent';
 
 const Add = ({ navigation }: CreateEventProp) => {
+  const wallet = useWallet();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const {
@@ -70,6 +72,14 @@ const Add = ({ navigation }: CreateEventProp) => {
       )}
     </>
   );
+
+  if (!wallet) {
+    return (
+      <View className="h-full flex justify-center items-center bg-black dark:bg-black p-4">
+        <Text className="font-bold text-lg">Please connect your wallet</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="h-full bg-black dark:bg-black p-4">

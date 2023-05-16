@@ -1,5 +1,4 @@
 import { useAddress } from '@thirdweb-dev/react-native';
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { EVENT_FORM_INITIAL_VALUES, FUNCTIONS } from '../constants';
 import { CreateEventProp, Screens } from '../types';

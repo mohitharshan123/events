@@ -3,6 +3,8 @@
  */
 
 // Import polyfills
+import 'react-native-reanimated';
+
 import '@thirdweb-dev/react-native-compat';
 
 import { AppRegistry } from 'react-native';

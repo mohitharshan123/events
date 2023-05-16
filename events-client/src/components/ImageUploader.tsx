@@ -3,10 +3,10 @@ import { Image, TouchableOpacity } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { ACTIVE_OPACITY } from '../constants';
 import { UseFormSetValue } from 'react-hook-form/dist/types/form';
+
 import { EventFormFields } from '../types';
+import { ACTIVE_OPACITY } from '../constants';
 
 type UploadToStorageType = {
   imageName: string;

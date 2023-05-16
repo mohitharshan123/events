@@ -32,7 +32,7 @@ const Home = () => {
               tabBarIcon: props => <TabIcon {...props} />,
             }}
             name={name as keyof BottomTabNavigatorParamList}
-            component={Component}
+            component={Component as React.FC}
           />
         ))}
       </Tab.Navigator>

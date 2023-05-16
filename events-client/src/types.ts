@@ -1,5 +1,6 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
+import { Dispatch, SetStateAction } from 'react';
 
 export type EventToFund = {
   id: string | number;
@@ -20,6 +21,7 @@ export enum Screens {
   EventDetail = 'EventDetail',
   Home = 'Home',
   Add = 'Add',
+  Scan = 'Scan',
 }
 
 export type BottomTabNavigatorParamList = {
@@ -30,7 +32,8 @@ export type BottomTabNavigatorParamList = {
 
 export type RootStackParamList = {
   [Screens.Home]: undefined;
-  [Screens.EventDetail]: { event: EventToFund };
+  [Screens.EventDetail]: { eventId: string | number; loadedFrom?: Screens };
+  [Screens.Scan]: { eventId: string | number };
 };
 
 export type EventsNavigationProp = NativeStackNavigationProp<
@@ -43,10 +46,17 @@ export type AddEventNavigationProp = NativeStackNavigationProp<
   Screens.Add
 >;
 
+export type EventDetailNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  Screens.Scan
+>;
+
 export type EventDetailRouteProp = RouteProp<
   RootStackParamList,
   Screens.EventDetail
 >;
+
+export type ScanRouteProp = RouteProp<RootStackParamList, Screens.Scan>;
 
 export type EventFormFields = {
   title: string;
@@ -56,6 +66,21 @@ export type EventFormFields = {
   imageUrl: string;
 };
 
+export type EventCardProps = {
+  event: EventToFund;
+  translationY?: { value: number };
+  loadedFrom?: Screens;
+  refetchEvents?: any;
+  navigation?: EventDetailNavigationProp | EventsNavigationProp;
+};
+
 export type CreateEventProp = {
   navigation: AddEventNavigationProp;
+};
+
+export type DonateComponentProps = {
+  isDonateModalVisible: boolean;
+  setIsDonateModalVisible: Dispatch<SetStateAction<boolean>>;
+  eventId: string | number;
+  refetchEvents?: any;
 };

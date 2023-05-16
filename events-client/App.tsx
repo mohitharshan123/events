@@ -10,7 +10,8 @@ import Home from './src/screens/Home';
 import EventDetail from './src/screens/EventDetail';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RootStackParamList } from './src/types';
+import { RootStackParamList, Screens } from './src/types';
+import Scan from './src/screens/Scan';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -22,9 +23,13 @@ const App = () => {
       <NavigationContainer>
         <RootStack.Navigator
           screenOptions={{ headerShown: false }}
-          initialRouteName="Home">
-          <RootStack.Screen name="Home" component={Home} />
-          <RootStack.Screen name="EventDetail" component={EventDetail} />
+          initialRouteName={Screens.Home}>
+          <RootStack.Screen name={Screens.Home} component={Home} />
+          <RootStack.Screen
+            name={Screens.EventDetail}
+            component={EventDetail}
+          />
+          <RootStack.Screen name={Screens.Scan} component={Scan} />
         </RootStack.Navigator>
       </NavigationContainer>
     </ThirdwebProvider>

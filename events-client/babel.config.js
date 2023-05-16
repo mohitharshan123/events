@@ -2,6 +2,11 @@ module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
   plugins: [
     'nativewind/babel',
-    ['react-native-reanimated/plugin', { relativeSourceLocation: true }],
+    [
+      'react-native-reanimated/plugin',
+      {
+        globals: ['__scanCodes', '__decode'],
+      },
+    ],
   ],
 };

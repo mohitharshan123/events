@@ -4,21 +4,28 @@ import {
   useContract,
   useContractRead,
 } from '@thirdweb-dev/react-native';
-import { View, FlatList, TouchableOpacity } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text } from 'react-native';
 import Lottie from 'lottie-react-native';
 
-import { ACTIVE_OPACITY, CONTRACT_ADDRESS, FUNCTIONS } from '../constants';
+import {
+  ACTIVE_OPACITY,
+  CONTRACT_ADDRESS,
+  FUNCTIONS,
+  TAB_BAR_HEIGHT,
+} from '../constants';
 import { parseEvents } from '../utils';
 import EventCard from '../components/EventCard';
 import { Screens, EventsNavigationProp } from '../types';
+import { useWallet } from '@thirdweb-dev/react-native';
 
 const Events = ({
   navigation,
-  loadedFrom = 'events',
+  loadedFrom = Screens.Events,
 }: {
   navigation: EventsNavigationProp;
-  loadedFrom: 'events' | 'myEvents';
+  loadedFrom: Screens;
 }) => {
+  const wallet = useWallet();
   const { contract } = useContract(CONTRACT_ADDRESS);
   const user = useAddress();
   const {
@@ -34,12 +41,20 @@ const Events = ({
   );
 
   const events =
-    loadedFrom === 'events' ? parseEvents(allEvents) : parseEvents(myEvents);
-
-  console.log({ myEvents: events });
+    loadedFrom === Screens.Events
+      ? parseEvents(allEvents)
+      : parseEvents(myEvents);
 
   const isLoading =
-    loadedFrom === 'events' ? isAllEventsLoading : isMyEventsLoading;
+    loadedFrom === Screens.Events ? isAllEventsLoading : isMyEventsLoading;
+
+  if (!wallet && loadedFrom === Screens.MyEvents) {
+    return (
+      <View className="h-full flex justify-center items-center bg-black dark:bg-black p-4">
+        <Text className="font-bold text-lg">Please connect your wallet</Text>
+      </View>
+    );
+  }
 
   if (!events?.length && !isLoading) {
     return (
@@ -58,6 +73,10 @@ const Events = ({
           showsVerticalScrollIndicator={false}
           className="flex-1"
           data={events}
+          contentContainerStyle={{
+            marginTop: 20,
+            paddingBottom: TAB_BAR_HEIGHT + 40,
+          }}
           onRefresh={refetch}
           refreshing={isLoading}
           renderItem={({ item }) => (
@@ -66,9 +85,17 @@ const Events = ({
                 <TouchableOpacity
                   activeOpacity={ACTIVE_OPACITY}
                   onPress={() =>
-                    navigation.navigate(Screens.EventDetail, { event: item })
+                    navigation.navigate(Screens.EventDetail, {
+                      eventId: item.id,
+                      loadedFrom,
+                    })
                   }>
-                  <EventCard event={item} />
+                  <EventCard
+                    event={item}
+                    refetchEvents={refetch}
+                    loadedFrom={loadedFrom}
+                    navigation={navigation}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
