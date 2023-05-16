@@ -6,7 +6,7 @@ import Events from './screens/Events';
 import { Screens } from './types';
 
 export const CONTRACT_ADDRESS: string =
-  '0x7b5eeb87CC676697749F1d56bC005Bba1138b724';
+  '0xAA6a1a60Bbe00d36166Be97059b6EcA355ae2d9f';
 
 export const FUNCTIONS = {
   get_events: 'getEvents',
